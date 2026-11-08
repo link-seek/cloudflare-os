@@ -24,6 +24,6 @@ jobs:
           cache: pnpm
 
       - run: pnpm install
-      - run: pnpm cf-os check
       - run: pnpm cf-os access
+      - run: pnpm cf-os check
       - run: pnpm cf-os deploy
