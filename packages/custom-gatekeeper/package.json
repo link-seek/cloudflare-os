@@ -1,0 +1,25 @@
+{
+  "name": "custom-gatekeeper",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "types:check": "tsc --noEmit",
+    "test:run": "vitest run"
+  },
+  "dependencies": {
+    "@gadgets/workshop-shared": "link:../../cloudflare-os/packages/workshop-shared",
+    "capnweb": "catalog:",
+    "capnweb-validate": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "catalog:",
+    "@gadgets/scripts": "link:../../cloudflare-os/scripts",
+    "@types/node": "26.1.0",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "wrangler": "catalog:"
+  }
+}

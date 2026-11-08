@@ -1,0 +1,31 @@
+{
+  "name": "cloudflare-os-starter",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.17.0",
+  "engines": {
+    "node": ">=24.19.0"
+  },
+  "scripts": {
+    "postinstall": "cf-os install",
+    "install:submodule": "cf-os install",
+    "cf-os": "cf-os",
+    "build": "cf-os install --check && vp run --filter \"!cloudflare-os-starter\" --cache build",
+    "test": "cf-os install --check && vp run --filter \"!cloudflare-os-starter\" --cache test",
+    "lint:check": "vp lint",
+    "lint:fix": "vp lint --fix",
+    "lint": "pnpm run lint:check && pnpm run build",
+    "check": "cf-os check",
+    "deploy": "cf-os deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "catalog:",
+    "cf-os": "workspace:*",
+    "@types/node": "26.1.0",
+    "cf": "1.0.0-beta.19",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:",
+    "wrangler": "catalog:"
+  }
+}
