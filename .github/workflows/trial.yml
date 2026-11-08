@@ -1,0 +1,52 @@
+name: trial-runlocal
+
+on:
+  workflow_dispatch:
+
+jobs:
+  trial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CF_PARENT_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.17.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - run: pnpm install --no-frozen-lockfile
+
+      - name: start run-local in background
+        run: |
+          (pnpm run-local > /tmp/runlocal.log 2>&1 & echo $! > /tmp/runlocal.pid)
+          sleep 45
+          tail -n 30 /tmp/runlocal.log || true
+
+      - name: smoke homepage
+        run: |
+          for i in $(seq 1 12); do
+            code=$(curl -s -o /tmp/home.html -w "%{http_code}" --max-time 15 http://localhost:8787/) && break || sleep 10
+          done
+          echo "http=$code size=$(wc -c < /tmp/home.html)"
+          test "$code" = "200"
+
+      - name: smoke api
+        run: |
+          curl -s --max-time 20 http://localhost:8787/api/health 2>&1 | head -c 300; echo
+          curl -s -o /dev/null -w "router=%{http_code}\n" --max-time 20 http://localhost:8787/
+
+      - name: show server log tail
+        if: always()
+        run: tail -n 60 /tmp/runlocal.log || true
+
+      - name: stop
+        if: always()
+        run: kill $(cat /tmp/runlocal.pid) 2>/dev/null || true
