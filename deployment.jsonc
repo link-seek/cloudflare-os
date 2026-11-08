@@ -1,14 +1,14 @@
 {
   // Cloudflare account that owns every Worker and provisioned resource.
   // Find it: https://developers.cloudflare.com/fundamentals/account/find-account-and-zone-ids/
-  "accountId": "<CLOUDFLARE_ACCOUNT_ID>",
+  "accountId": "47ce24ced58f17c9fb15351adcbe67d4",
 
   // The deployment's public origin, used for PUBLIC_BASE_URL and to scope Context data.
   // null derives it from workers.router.route.customDomain.
   // Required when the router uses workersDev: the account's workers.dev subdomain is not
   // knowable from this file. Write it as a bare origin, no path and no trailing slash --
   // "https://<router-name>.<subdomain>.workers.dev".
-  "publicBaseUrl": null,
+  "publicBaseUrl": "https://pi-gateway.delicate-dawn-probe.workers.dev",
 
   // Worker names are permanent service identities. Keep them unique within the account.
   // Reference: docs/customization.md#workers-and-routing
@@ -16,21 +16,21 @@
     // Owns the public URL and serves the frontend. Proxies /api and /blueprint-screenshot to the
     // Workshop, and /gatekeeper/<name> to the matching Gatekeeper.
     "router": {
-      "name": "<ROUTER_WORKER_NAME>",
+      "name": "pi-gateway",
 
       // Production: use a hostname in an active Cloudflare zone. Wrangler creates DNS and TLS.
       // Evaluation: replace this with "route": { "workersDev": true } and set publicBaseUrl above.
       // https://developers.cloudflare.com/workers/configuration/routing/custom-domains/
-      "route": { "customDomain": "os.example.com" }
+      "route": { "workersDev": true }
     },
 
     // The Workshop backend. No public route: the router reaches it over a service binding.
-    "workshop": { "name": "<WORKSHOP_WORKER_NAME>" },
-    "context": { "name": "<CONTEXT_WORKER_NAME>" },
+    "workshop": { "name": "pi-gateway-workshop" },
+    "context": { "name": "pi-gateway-context" },
 
     // The Scheduler Gatekeeper, which gives agents scheduled and recurring work. Ambient like
     // the Context Gatekeeper
-    "scheduler": { "name": "<SCHEDULER_WORKER_NAME>" },
+    "scheduler": { "name": "pi-gateway-scheduler" },
 
     // The Web Search Gatekeeper, which lets agents search the public web. Ambient too. It searches
     // through aiGateway.name below when that gateway is in this account, and through the account's
@@ -38,10 +38,10 @@
     // separately from models: load AI Gateway credits on the account, or store a Ceramic key
     // (alias "default") on the gateway it actually searches through, or every search fails.
     // See docs/customization.md#workers-and-routing.
-    "websearch": { "name": "<WEBSEARCH_WORKER_NAME>" },
+    "websearch": { "name": "pi-gateway-websearch" },
 
-    "customGatekeeper": { "name": "<CUSTOM_GATEKEEPER_WORKER_NAME>" },
-    "errorReporter": { "name": "<ERROR_REPORTER_WORKER_NAME>" }
+    "customGatekeeper": { "name": "pi-gateway-gk-custom" },
+    "errorReporter": { "name": "pi-gateway-errors" }
   },
 
   // Optional upstream Gatekeepers (GitHub, Slack, ...), keyed by slug, each its own Worker:
@@ -57,10 +57,11 @@
   // fills in issuer and audience.
   // "admins" gates /admin in every sign-in method.
   // Reference: docs/customization.md#sign-in-methods
+  // NOTE (trial): issuer/audience filled by `pnpm cf-os access` at deploy time.
   "access": {
     "issuer": "https://<TEAM_NAME>.cloudflareaccess.com",
     "audience": "<ACCESS_AUDIENCE>",
-    "admins": ["<ADMIN_EMAIL>"]
+    "admins": ["Xieyucheng@outlook.com"]
   },
 
   // Model catalog served through Cloudflare AI Gateway. Enabled by default: the Workshop reaches
@@ -105,9 +106,9 @@
   // Displayed to agents when the example custom integration is enabled in /admin. false deploys none.
   // Reference: docs/customization.md#custom-gatekeepers
   "customGatekeeper": {
-    "enabled": true,
-    "name": "<ORGANIZATION_DISPLAY_NAME>",
-    "message": "<ORGANIZATION_GUIDANCE>"
+    "enabled": false,
+    "name": "LinkSeek",
+    "message": "Trial deployment: pipeline dispatch gateway pilot."
   },
 
   // Explicit backend issue reports go to a private Worker that emits structured console errors.
