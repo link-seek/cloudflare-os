@@ -26,8 +26,8 @@ jobs:
 
       - name: start run-local in background
         run: |
-          (pnpm run-local > /tmp/runlocal.log 2>&1 & echo $! > /tmp/runlocal.pid)
-          sleep 45
+          (pnpm --dir cloudflare-os run-local > /tmp/runlocal.log 2>&1 & echo $! > /tmp/runlocal.pid)
+          sleep 90
           tail -n 30 /tmp/runlocal.log || true
 
       - name: smoke homepage
